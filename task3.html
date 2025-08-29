@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Styling & JavaScript</title>
+  <style>
+    /* ---------- Global Styling ---------- */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    h1 {
+      margin: 20px 0;
+      color: #1d3557;
+    }
+
+    /* ---------- Carousel ---------- */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      width: 90%;
+      max-width: 600px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .slides img {
+      width: 100%;
+      border-radius: 10px;
+    }
+
+    #carousel-nav {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .nav-dot {
+      height: 12px;
+      width: 12px;
+      margin: 0 5px;
+      background-color: #bbb;
+      border-radius: 50%;
+      display: inline-block;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .nav-dot.active {
+      background-color: #1d3557;
+    }
+
+    /* ---------- Quiz ---------- */
+    .quiz-container {
+      width: 90%;
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .option {
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .option:hover {
+      background: #f1f1f1;
+    }
+
+    .correct {
+      background: #a8e6cf !important;
+      border-color: #34a853;
+    }
+
+    .wrong {
+      background: #ffcccb !important;
+      border-color: #ea4335;
+    }
+
+    #next-btn {
+      padding: 10px 15px;
+      margin-top: 15px;
+      background: #1d3557;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+
+    #score {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    /* ---------- API/Quotes ---------- */
+    .api-section {
+      width: 90%;
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    #api-result {
+      margin-top: 10px;
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    button {
+      padding: 8px 15px;
+      margin-top: 10px;
+      background: #457b9d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* ---------- Responsive Design ---------- */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .quiz-container, .api-section {
+        padding: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+      }
+      .option {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Advanced Styling & JavaScript</h1>
+
+  <!-- Carousel -->
+  <div class="carousel-container">
+    <div id="slides" class="slides">
+      <img src="https://picsum.photos/id/1015/600/300" alt="slide1">
+      <img src="https://picsum.photos/id/1016/600/300" alt="slide2">
+      <img src="https://picsum.photos/id/1018/600/300" alt="slide3">
+      <img src="https://picsum.photos/id/1020/600/300" alt="slide4">
+      <img src="https://picsum.photos/id/1024/600/300" alt="slide5">
+    </div>
+  </div>
+  <div id="carousel-nav"></div>
+
+  <!-- Quiz -->
+  <div class="quiz-container">
+    <h2 id="quiz-question"></h2>
+    <div id="quiz-options"></div>
+    <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+    <p id="score">Score: 0/0</p>
+  </div>
+
+  <!-- API Quotes -->
+  <div class="api-section">
+    <h2>💭 Travel Wisdom</h2>
+    <button onclick="fetchQuote()">Get Random Quote</button>
+    <div id="api-result"></div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    /* (✅ Corrected JavaScript code from earlier) */
+    // --- Carousel ---
+    let currentSlide = 0;
+    const totalSlides = 5;
+
+    function initializeCarousel() {
+      const navContainer = document.getElementById('carousel-nav');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'nav-dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => goToSlide(i);
+        navContainer.appendChild(dot);
+      }
+      setInterval(() => { changeSlide(1); }, 5000);
+    }
+
+    function updateCarousel() {
+      const slides = document.getElementById('slides');
+      const dots = document.querySelectorAll('.nav-dot');
+      slides.style.transform = `translateX(-${currentSlide * 100}%)`;
+      dots.forEach((dot, index) => dot.classList.toggle('active', index === currentSlide));
+    }
+
+    function changeSlide(direction) {
+      currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+      updateCarousel();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateCarousel();
+    }
+
+    // --- Quiz ---
+    const quizQuestions = [
+      { question: "Which country is home to Machu Picchu?", options: ["Brazil", "Peru", "Chile", "Argentina"], correct: 1 },
+      { question: "What is the capital of Australia?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], correct: 2 },
+      { question: "Which city is known as the 'Pearl of the Orient'?", options: ["Bangkok", "Hong Kong", "Singapore", "Manila"], correct: 1 },
+      { question: "In which country would you find the ancient city of Petra?", options: ["Egypt", "Jordan", "Israel", "Lebanon"], correct: 1 },
+      { question: "Which European city is famous for its canals and gondolas?", options: ["Amsterdam", "Venice", "Bruges", "Stockholm"], correct: 1 }
+    ];
+    let currentQuestionIndex = 0, score = 0, answered = false;
+
+    function loadQuestion() {
+      if (currentQuestionIndex >= quizQuestions.length) return showFinalScore();
+      const q = quizQuestions[currentQuestionIndex];
+      document.getElementById('quiz-question').textContent = q.question;
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+      q.options.forEach((opt, i) => {
+        const div = document.createElement('div');
+        div.className = 'option';
+        div.textContent = opt;
+        div.onclick = () => selectOption(i);
+        optionsContainer.appendChild(div);
+      });
+      document.getElementById('next-btn').style.display = 'none';
+      answered = false;
+      updateScore();
+    }
+
+    function selectOption(i) {
+      if (answered) return;
+      answered = true;
+      const q = quizQuestions[currentQuestionIndex];
+      const options = document.querySelectorAll('.option');
+      options.forEach((opt, idx) => {
+        if (idx === q.correct) opt.classList.add('correct');
+        else if (idx === i) opt.classList.add('wrong');
+        opt.style.pointerEvents = 'none';
+      });
+      if (i === q.correct) score++;
+      document.getElementById('next-btn').style.display = 'block';
+      updateScore();
+    }
+
+    function nextQuestion() {
+      currentQuestionIndex++;
+      loadQuestion();
+    }
+
+    function updateScore() {
+      document.getElementById('score').textContent = `Score: ${score}/${currentQuestionIndex + (answered ? 1 : 0)}`;
+    }
+
+    function showFinalScore() {
+      const pct = Math.round((score / quizQuestions.length) * 100);
+      document.getElementById('quiz-question').innerHTML = `Quiz Complete! <br> Score: ${score}/${quizQuestions.length} (${pct}%)`;
+      document.getElementById('quiz-options').innerHTML = '';
+      document.getElementById('next-btn').style.display = 'none';
+    }
+
+    // --- Quotes (simulating API) ---
+    const travelQuotes = [
+      "The world is a book, and those who do not travel read only one page. - Saint Augustine",
+      "Travel is the only thing you buy that makes you richer. - Unknown",
+      "Not all those who wander are lost. - J.R.R. Tolkien",
+      "Adventure is worthwhile in itself. - Amelia Earhart",
+      "To travel is to live. - Hans Christian Andersen"
+    ];
+
+    function fetchQuote() {
+      const q = travelQuotes[Math.floor(Math.random() * travelQuotes.length)];
+      const res = document.getElementById('api-result');
+      res.style.opacity = '0';
+      setTimeout(() => { res.innerHTML = `<em>"${q}"</em>`; res.style.opacity = '1'; }, 200);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeCarousel();
+      loadQuestion();
+    });
+  </script>
+</body>
+</html>
